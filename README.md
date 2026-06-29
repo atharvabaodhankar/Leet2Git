@@ -2,7 +2,7 @@
 
 I wanted an easy way to automatically push my accepted LeetCode solutions to GitHub. The existing options required manually pushing every solution, and the Chrome extensions I tried were either unreliable or no longer working.
 
-Instead of settling for that, I built my own solution using **AntiGravity**.
+Instead of settling for that, I built my own solution .
 
 ### Features
 
