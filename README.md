@@ -66,3 +66,43 @@ This extension keeps your GitHub repository up to date with your LeetCode journe
 
 > **Note:** The `README.md` file is part of the repository and does not affect the extension. Chrome only cares that the selected folder contains a valid `manifest.json` file.
 
+
+## Generating a GitHub Personal Access Token (Classic)
+
+Leet2Git requires a GitHub Personal Access Token (PAT) to automatically push your accepted LeetCode solutions to GitHub.
+
+### Steps
+
+1. Open:
+
+   ```
+   https://github.com/settings/tokens/new
+   ```
+
+   *(Generate new token (Classic))*
+
+2. Enter a **Note** (e.g., `Leet2Git`).
+
+3. Select an **Expiration** (or choose **No expiration** if preferred).
+
+4. Under **Select scopes**, enable:
+
+   * ✅ **repo** (Full control of private repositories)
+
+   > If you're only using a public repository, the **repo** scope is still sufficient and commonly used.
+
+5. Click **Generate token**.
+
+6. **Copy the generated token immediately.** GitHub will only show it once.
+
+7. Open the **Leet2Git** extension and enter:
+
+   * GitHub Personal Access Token (PAT)
+   * GitHub Username
+   * Repository Name
+
+8. Click **Save**. Your extension is now ready to automatically sync accepted LeetCode submissions to your GitHub repository.
+
+> **⚠️ Security Notice:** Never share your Personal Access Token or commit it to GitHub. Treat it like your GitHub password.
+
+
