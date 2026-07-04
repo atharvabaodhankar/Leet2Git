@@ -119,6 +119,20 @@ async function pushToGitHub(token, owner, repo, path, content, commitMessage, sh
   return response.ok;
 }
 
+// Deduplication guard: track recently pushed submissions to prevent double-push
+// when both the REST check endpoint and GraphQL endpoint fire for the same submission.
+const recentlyPushed = new Map(); // key: titleSlug or questionId, value: timestamp
+
+function isDuplicate(questionId) {
+  const DEDUP_WINDOW_MS = 10000; // 10 seconds
+  const last = recentlyPushed.get(questionId);
+  if (last && Date.now() - last < DEDUP_WINDOW_MS) {
+    return true;
+  }
+  recentlyPushed.set(questionId, Date.now());
+  return false;
+}
+
 // Listener for messages
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'SUBMISSION_ACCEPTED') {
@@ -152,6 +166,14 @@ async function handleAcceptedSubmission(payload) {
   let title = payload.title;
   let titleSlug = payload.slug;
 
+  // Early dedup check using titleSlug or questionId before doing any async work.
+  // Prevents double-push when both the REST /check/ and GraphQL interceptors fire.
+  const rawKey = titleSlug || questionFrontendId;
+  if (rawKey && isDuplicate(rawKey)) {
+    console.log('[Leet2Git] Duplicate submission event detected — skipping.');
+    return;
+  }
+
   if (titleSlug) {
     const details = await fetchLeetCodeDetails(titleSlug);
     if (details) {
@@ -181,7 +203,10 @@ async function handleAcceptedSubmission(payload) {
 
   if (success) {
     console.log(`[Leet2Git] Successfully pushed ${fileName} to GitHub!`);
-    
+
+    // Clear any error badge now that a push succeeded
+    chrome.action.setBadgeText({ text: '' });
+
     // Save to storage statistics
     const statsResult = await chrome.storage.local.get(['stats']);
     const stats = statsResult.stats || {
@@ -201,13 +226,14 @@ async function handleAcceptedSubmission(payload) {
       else if (difficulty === 'Medium') stats.Medium += 1;
       else if (difficulty === 'Hard') stats.Hard += 1;
       stats.total += 1;
+
+      // Update language counts only for new questions (not re-syncs of the same problem)
+      const langDisplay = EXTENSIONS[cleanLangName] ? cleanLangName.toUpperCase() : 'UNKNOWN';
+      stats.languages[langDisplay] = (stats.languages[langDisplay] || 0) + 1;
     }
 
-    // Update language counts
-    const langDisplay = EXTENSIONS[cleanLangName] ? cleanLangName.toUpperCase() : 'UNKNOWN';
-    stats.languages[langDisplay] = (stats.languages[langDisplay] || 0) + 1;
-
     // Add to history list (prepend to keep recent at top)
+    const langDisplay = EXTENSIONS[cleanLangName] ? cleanLangName.toUpperCase() : 'UNKNOWN';
     const historyItem = {
       questionId: questionFrontendId,
       title: title,
@@ -226,5 +252,8 @@ async function handleAcceptedSubmission(payload) {
     console.log('[Leet2Git] Stats updated locally.');
   } else {
     console.error(`[Leet2Git] Failed to push code to GitHub. Please check repository permissions and API token.`);
+    // Show a persistent red error badge so the user knows the sync failed
+    chrome.action.setBadgeText({ text: '✗' });
+    chrome.action.setBadgeBackgroundColor({ color: '#EF4743' });
   }
 }
