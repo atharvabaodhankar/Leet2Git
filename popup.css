@@ -36,7 +36,6 @@ body {
   height: 100%;
 }
 
-/* Header */
 .header {
   display: flex;
   justify-content: space-between;
@@ -85,7 +84,6 @@ body {
   transform: rotate(20deg);
 }
 
-/* Views */
 .view {
   flex: 1;
   display: flex;
@@ -98,7 +96,6 @@ body {
   display: none !important;
 }
 
-/* Stats Section */
 .stats-container {
   display: flex;
   flex-direction: column;
@@ -157,17 +154,9 @@ body {
   height: 3px;
 }
 
-.diff-card.easy::before {
-  background-color: var(--easy-color);
-}
-
-.diff-card.medium::before {
-  background-color: var(--medium-color);
-}
-
-.diff-card.hard::before {
-  background-color: var(--hard-color);
-}
+.diff-card.easy::before { background-color: var(--easy-color); }
+.diff-card.medium::before { background-color: var(--medium-color); }
+.diff-card.hard::before { background-color: var(--hard-color); }
 
 .diff-num {
   font-size: 1.15rem;
@@ -182,7 +171,6 @@ body {
   color: var(--text-muted);
 }
 
-/* History Section */
 .history-container {
   flex: 1;
   display: flex;
@@ -212,7 +200,6 @@ body {
   overflow-y: auto;
 }
 
-/* Scrollbars */
 .history-scroll::-webkit-scrollbar,
 .view::-webkit-scrollbar {
   width: 4px;
@@ -247,17 +234,9 @@ body {
   font-size: 0.75rem;
 }
 
-.history-item.easy {
-  border-left-color: var(--easy-color);
-}
-
-.history-item.medium {
-  border-left-color: var(--medium-color);
-}
-
-.history-item.hard {
-  border-left-color: var(--hard-color);
-}
+.history-item.easy { border-left-color: var(--easy-color); }
+.history-item.medium { border-left-color: var(--medium-color); }
+.history-item.hard { border-left-color: var(--hard-color); }
 
 .history-details {
   display: flex;
@@ -297,7 +276,6 @@ body {
   line-height: 1.4;
 }
 
-/* Settings Form */
 .form-container {
   display: flex;
   flex-direction: column;
@@ -370,10 +348,6 @@ body {
   white-space: pre-line;
 }
 
-.status-success {
-  color: var(--easy-color);
-}
-
-.status-error {
-  color: var(--hard-color);
-}
+.status-success { color: var(--easy-color); }
+.status-error { color: var(--hard-color); }
+.status-info { color: var(--primary-color); }
